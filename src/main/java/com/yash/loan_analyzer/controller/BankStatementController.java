@@ -23,7 +23,11 @@ public class BankStatementController {
     public Map<String, Double> analyze(@RequestBody List<Transaction> transactions){
         double credits = bankStatementService.calculateTotalCredits(transactions);
         double debits = bankStatementService.calculateTotalDebits(transactions);
+
+        bankStatementService.saveAll(transactions);
+
         kafkaProducerService.sendStatement("Statement received with " + transactions.size() + " transactions");
+
         return Map.of(
                 "totalCredits", credits,
                 "totalDebits", debits,
